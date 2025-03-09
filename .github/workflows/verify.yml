@@ -15,10 +15,87 @@ jobs:
 
       - uses: giancosta86/aurora-github/actions/check-project-license@v10
 
+  check-style:
+    runs-on: ubuntu-24.04
+    needs: check-license
+    steps:
+      - uses: actions/checkout@v4
+
+      - shell: bash
+        run: |
+          find -name "*.sh" -exec shellcheck -s bash -S style -Calways -e SC1091,SC2164,SC2154,SC2034 {} +
+
+  test-strict-mode:
+    runs-on: ubuntu-24.04
+    needs: check-style
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/run-verify
+        with:
+          test-subdirectory: strict-mode
+
+  test-crash:
+    runs-on: ubuntu-24.04
+    needs: test-strict-mode
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/run-verify
+        with:
+          test-subdirectory: crash
+
+  test-auroraDebug:
+    runs-on: ubuntu-24.04
+    needs: test-crash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/run-verify
+        with:
+          test-subdirectory: auroraDebug
+
+  test-header:
+    runs-on: ubuntu-24.04
+    needs: test-auroraDebug
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/run-verify
+        with:
+          test-subdirectory: header
+
+  test-mkcd:
+    runs-on: ubuntu-24.04
+    needs: test-header
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/run-verify
+        with:
+          test-subdirectory: mkcd
+
+  test-nvmcd:
+    runs-on: ubuntu-24.04
+    needs: test-mkcd
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/run-verify
+        with:
+          test-subdirectory: nvmcd
+
   verify:
     runs-on: ubuntu-24.04
     needs:
       - check-license
+      - check-style
+      - test-strict-mode
+      - test-crash
+      - test-auroraDebug
+      - test-header
+      - test-mkcd
+      - test-nvmcd
 
     steps:
       - name: Show completion message
