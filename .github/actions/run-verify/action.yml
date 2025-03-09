@@ -1,0 +1,22 @@
+name: Run verify.sh script
+
+inputs:
+  test-subdirectory:
+    description: The sub-directory of "tests" containing "verify.sh".
+
+runs:
+  using: composite
+  steps:
+    - name: Verify inputs
+      shell: bash
+      run: |
+        if [[ -z "${{ inputs.test-subdirectory }}" ]]
+        then
+          echo "❌Missing input: test-subdirectory!" >&2
+          exit 1
+        fi
+
+    - name: Run tests
+      shell: bash
+      working-directory: tests/${{ inputs.test-subdirectory }}
+      run: source verify.sh
