@@ -1,4 +1,3 @@
-source "${BASH_SOURCE[0]%/*}/../strict-mode/main.sh"
 source "${BASH_SOURCE[0]%/*}/../auroraDebug/main.sh"
 
 mkcd() {
