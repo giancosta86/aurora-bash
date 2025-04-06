@@ -1,5 +1,3 @@
-source "${BASH_SOURCE[0]%/*}/../strict-mode/main.sh"
-
 header() {
   local text="$1"
 

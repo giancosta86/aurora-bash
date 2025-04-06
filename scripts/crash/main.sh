@@ -1,5 +1,3 @@
-source "${BASH_SOURCE[0]%/*}/../strict-mode/main.sh"
-
 crash() {
   local message="$1"
 
